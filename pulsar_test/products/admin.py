@@ -19,6 +19,7 @@ class ProductForm(forms.ModelForm):
 
     def save(self, *args, **kwargs):
         product = super(ProductForm, self).save(*args, **kwargs)
+        product.save()
         image = self.cleaned_data['image']
         clean_image = self.cleaned_data['clean_image']
         if image or clean_image:

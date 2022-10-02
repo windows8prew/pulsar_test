@@ -4,6 +4,7 @@ from os.path import join, basename
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
+from pulsar_test.utils import get_extension
 
 class Product(models.Model):
     class Meta:
@@ -40,7 +41,7 @@ class ProductImage(models.Model):
         ordering = ('created_at',)
 
     def image_dir(self, filename):
-        return join('product_images', str(self.product.pk)+filename.split('.')[-1])
+        return join('product_images', f'{self.product.pk}.{get_extension(filename)}')
 
     created_at = models.DateTimeField(auto_now_add=True)
     image = models.ImageField(_('Изображение'), max_length=100, upload_to=image_dir)
@@ -59,11 +60,4 @@ class ProductImage(models.Model):
 
     @property
     def extension(self):
-        return self.image.name.split('.')[-1].lower()
-
-    def save(self, *args, **kwargs):
-        obj = super(ProductImage, self).save(*args, **kwargs)
-
-        # with BytesIO() as f:
-        #     im.save(f, format='JPEG')
-        #     return f.getvalue()
+        return get_extension(self.image.name)
